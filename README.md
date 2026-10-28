@@ -10,5 +10,5 @@ Bem-vindo ao meu portfólio de Garantia de Qualidade de Software! Este repositó
 
 ## 🛠️ Ferramentas e Tecnologias
 - **Metodologia de Testes:** BDD (Behavior Driven Development)
-- **Controlo de Versões:** Git / GitHub
+- **Controle de Versões:** Git / GitHub
 - **Ambiente:** Terminal Linux (Bash)
