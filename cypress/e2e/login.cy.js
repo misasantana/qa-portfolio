@@ -1,24 +1,41 @@
-import loginPage from '../pages/LoginPage';
+import LoginPage from '../pages/LoginPage'
 
-describe('Módulo de Autenticação - OrangeHRM (com POM)', () => {
+describe('Testes de Autenticação e Exceções - OrangeHRM', () => {
 
   beforeEach(() => {
-    loginPage.visitar();
-  });
+    LoginPage.visitar()
+  })
 
-  it('Deve realizar login com sucesso usando credenciais válidas', () => {
-    loginPage.realizarLogin('Admin', 'admin123');
-
-    cy.url().should('include', '/dashboard');
-    loginPage.elements.dashboardHeader().should('contain', 'Dashboard');
-  });
-
-  it('Deve exibir mensagem de erro ao inserir credenciais inválidas', () => {
-    loginPage.realizarLogin('AdminInvalido', 'senhaErrada123');
-
-    loginPage.elements.errorMessage()
+  it('Deve exibir mensagens de campo obrigatório ao tentar logar com campos vazios', () => {
+    LoginPage.submeterLogin()
+    
+    // Valida que a mensagem "Required" é exibida para os dois campos
+    LoginPage.elements.requiredErrorMsg()
       .should('be.visible')
-      .and('have.text', 'Invalid credentials');
-  });
+      .and('contain', 'Required')
+  })
 
-});
+  it('Deve redirecionar para a tela de redefinição de senha ao clicar em "Forgot your password?"', () => {
+    LoginPage.clicarEsqueceuSenha()
+    
+    // Valida a URL de reset de senha
+    cy.url().should('include', '/auth/requestPasswordResetCode')
+    cy.get('.orangehrm-forgot-password-title')
+      .should('be.visible')
+      .and('have.text', 'Reset Password')
+  })
+
+  it('Deve realizar o logout com sucesso e retornar à tela de login', () => {
+    LoginPage.preencherUsuario('Admin')
+    LoginPage.preencherSenha('admin123')
+    LoginPage.submeterLogin()
+
+    // Realiza o Logout
+    LoginPage.fazerLogout()
+
+    // Valida o retorno à página de login
+    cy.url().should('include', '/auth/login')
+    LoginPage.elements.loginButton().should('be.visible')
+  })
+
+})

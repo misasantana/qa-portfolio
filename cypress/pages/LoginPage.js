@@ -5,35 +5,39 @@ class LoginPage {
     passwordInput: () => cy.get('input[name="password"]'),
     loginButton: () => cy.get('button[type="submit"]'),
     errorMessage: () => cy.get('.oxd-alert-content-text'),
-    dashboardHeader: () => cy.get('.oxd-topbar-header-breadcrumb')
+    requiredErrorMsg: () => cy.get('.oxd-input-field-error-message'),
+    forgotPasswordLink: () => cy.get('.orangehrm-login-forgot'),
+    userDropdown: () => cy.get('.oxd-userdropdown-tab'),
+    logoutButton: () => cy.contains('a', 'Logout')
   }
 
-  // Ações que podem ser executadas na tela
-  //visitar() {
-    //cy.visit('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login');//
- // }
-   visitar() {
-    cy.visit('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login', { failOnStatusCode: false });
+  // Ações da tela
+  visitar() {
+    cy.visit('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login', {
+      failOnStatusCode: false
+    })
   }
 
   preencherUsuario(username) {
-    this.elements.usernameInput().type(username);
+    if (username) this.elements.usernameInput().type(username)
   }
 
   preencherSenha(password) {
-    this.elements.passwordInput().type(password);
+    if (password) this.elements.passwordInput().type(password)
   }
 
-  clicarLogin() {
-    this.elements.loginButton().click();
+  submeterLogin() {
+    this.elements.loginButton().click()
   }
 
-  // Método auxiliar para o fluxo completo
-  realizarLogin(username, password) {
-    this.preencherUsuario(username);
-    this.preencherSenha(password);
-    this.clicarLogin();
+  clicarEsqueceuSenha() {
+    this.elements.forgotPasswordLink().click()
+  }
+
+  fazerLogout() {
+    this.elements.userDropdown().click()
+    this.elements.logoutButton().click()
   }
 }
 
-export default new LoginPage();
+export default new LoginPage()
