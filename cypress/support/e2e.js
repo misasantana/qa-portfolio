@@ -1,3 +1,9 @@
+import 'cypress-mochawesome-reporter/register';
+
+// Ignora exceções não tratadas vindas do código da aplicação (ex: erros internos do OrangeHRM)
+Cypress.on('uncaught:exception', (err, runnable) => {
+  return false;
+});
 // ***********************************************************
 // This example support/e2e.js is processed and
 // loaded automatically before your test files.

@@ -12,7 +12,7 @@ class LoginPage {
   }
 
   // Ações da tela
-  visitar() {
+  visit() {
     cy.visit('https://opensource-demo.orangehrmlive.com/web/index.php/auth/login', {
       failOnStatusCode: false
     })
@@ -36,7 +36,7 @@ class LoginPage {
 
   fazerLogout() {
     this.elements.userDropdown().click()
-    this.elements.logoutButton().click()
+    this.elements.logoutButton().click({ force: true })
   }
 }
 

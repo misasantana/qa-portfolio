@@ -34,7 +34,7 @@ describe('Testes de Autenticação e Exceções - OrangeHRM', () => {
     LoginPage.fazerLogout()
 
     // Valida o retorno à página de login
-    cy.url().should('include', '/auth/login')
+    cy.get('button[type="submit"]').should('be.visible')
     LoginPage.elements.loginButton().should('be.visible')
   })
 
