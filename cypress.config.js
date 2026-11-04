@@ -1,14 +1,19 @@
-const { defineConfig } = require('cypress');
+const { defineConfig } = require("cypress");
 
 module.exports = defineConfig({
+  reporter: 'cypress-mochawesome-reporter',
+  reporterOptions: {
+    charts: true,
+    reportPageTitle: 'Relatório de Testes - OrangeHRM',
+    embeddedScreenshots: false,
+    inlineAssets: true,
+    saveAllAttempts: false,
+  },
   e2e: {
     baseUrl: 'https://opensource-demo.orangehrmlive.com',
-    pageLoadTimeout: 120000,
-    defaultCommandTimeout: 15000,
-    screenshotOnRunFailure: false, // <-- Desativa screenshots automáticas para evitar travamento
-    video: false,                  // <-- Garante que não consuma recursos gerando vídeo
+    screenshotOnRunFailure: false, // Desativa o print automático em falhas
     setupNodeEvents(on, config) {
-      // implement node event listeners here
+      require('cypress-mochawesome-reporter/plugin')(on);
     },
   },
 });

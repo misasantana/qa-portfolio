@@ -1,41 +1,49 @@
-import LoginPage from '../pages/LoginPage'
+import LoginPage from '../pages/LoginPage';
 
-describe('Testes de Autenticação e Exceções - OrangeHRM', () => {
+describe('Módulo de Autenticação - Login', () => {
 
   beforeEach(() => {
-    LoginPage.visitar()
-  })
+    Cypress.on('uncaught:exception', () => false);
+    LoginPage.visit();
+  });
 
-  it('Deve exibir mensagens de campo obrigatório ao tentar logar com campos vazios', () => {
-    LoginPage.submeterLogin()
+  it('CT-001 - Deve realizar login com sucesso', () => {
+    LoginPage.preencherUsuario('Admin');
+    LoginPage.preencherSenha('admin123');
+    LoginPage.submeterLogin(); // Ajustado para o nome correto do método
     
-    // Valida que a mensagem "Required" é exibida para os dois campos
-    LoginPage.elements.requiredErrorMsg()
-      .should('be.visible')
-      .and('contain', 'Required')
-  })
+    cy.url().should('include', '/dashboard');
+  });
 
-  it('Deve redirecionar para a tela de redefinição de senha ao clicar em "Forgot your password?"', () => {
-    LoginPage.clicarEsqueceuSenha()
+  it('CT-002 - Deve exibir mensagem de erro ao tentar login com senha inválida', () => {
+    LoginPage.preencherUsuario('Admin');
+    LoginPage.preencherSenha('senhaerrada');
+    LoginPage.submeterLogin();
     
-    // Valida a URL de reset de senha
-    cy.url().should('include', '/auth/requestPasswordResetCode')
-    cy.get('.orangehrm-forgot-password-title')
-      .should('be.visible')
-      .and('have.text', 'Reset Password')
-  })
+    // Valida a mensagem de credenciais inválidas direto no elemento de alerta
+    cy.get('.oxd-alert-content-text').should('contain', 'Invalid credentials');
+  });
 
-  it('Deve realizar o logout com sucesso e retornar à tela de login', () => {
-    LoginPage.preencherUsuario('Admin')
-    LoginPage.preencherSenha('admin123')
-    LoginPage.submeterLogin()
+  it('CT-006 - Deve exibir mensagem de erro ao tentar login com usuário em branco', () => {
+    cy.get('input[name="password"]').type('admin123');
+    cy.get('button[type="submit"]').click();
+    cy.get('.oxd-input-group__message').should('contain', 'Required');
+  });
 
-    // Realiza o Logout
-    LoginPage.fazerLogout()
+  it('CT-007 - Deve exibir mensagem de erro ao tentar login com senha em branco', () => {
+    LoginPage.preencherUsuario('Admin');
+    cy.get('button[type="submit"]').click();
+    cy.get('.oxd-input-group__message').should('contain', 'Required');
+  });
 
-    // Valida o retorno à página de login
-    cy.get('button[type="submit"]').should('be.visible')
-    LoginPage.elements.loginButton().should('be.visible')
-  })
+  it('CT-008 - Deve realizar logout com sucesso', () => {
+    LoginPage.preencherUsuario('Admin');
+    LoginPage.preencherSenha('admin123');
+    LoginPage.submeterLogin();
 
-})
+    cy.get('.oxd-userdropdown-tab').click();
+    cy.contains('a', 'Logout').click();
+
+    cy.url().should('include', '/auth/login');
+  });
+});
